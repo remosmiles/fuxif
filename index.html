@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Fux & Gemini</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+        }
+
+        /* Fuchs-Emoji oder ASCII-Stil */
+        .fux-icon {
+            font-size: 150px;
+            margin-bottom: 20px;
+            display: block;
+            text-shadow: 0 0 20px rgba(0, 255, 70, 0.8);
+        }
+
+        .matrix-text {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            transition: all 1s ease-in-out;
+        }
+
+        /* Grüne Phase */
+        .green-theme {
+            color: #00ff46;
+            text-shadow: 0 0 10px #00ff46;
+            font-size: 3rem;
+        }
+
+        /* Blaue Phase */
+        .blue-theme {
+            color: #00e5ff;
+            text-shadow: 0 0 15px #00e5ff, 0 0 30px #008cff;
+            font-size: 3.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <div id="overlay">
+        <div id="first-screen">
+            <span class="fux-icon">🦊</span>
+            <h1 class="matrix-text green-theme">DER LÄCHELNDE FUX</h1>
+        </div>
+        
+        <div id="second-screen" class="hidden">
+            <h1 class="matrix-text blue-theme">Gemini hilft dir überall!</h1>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let characters = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        characters = characters.split("");
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        let matrixColor = '#00ff46'; // Startfarbe Grün
+
+        function draw() {
+            // Semi-transparenter Hintergrund für den Trail-Effekt
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = matrixColor;
+            ctx.font = fontSize + 'px arial';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters[Math.floor(Math.random() * characters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        // Animation starten
+        const interval = setInterval(draw, 33);
+
+        // Nach 10 Sekunden (10000ms) wechseln
+        setTimeout(() => {
+            // Hintergrund-Regen auf Blau ändern
+            matrixColor = '#00e5ff';
+            
+            // Textinhalte umschalten
+            document.getElementById('first-screen').classList.add('hidden');
+            document.getElementById('second-screen').classList.remove('hidden');
+            
+            // Optional: Canvas kurz flashen für den Übergang
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }, 10000);
+
+        // Fenstergröße anpassen
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
